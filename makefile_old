@@ -14,10 +14,10 @@ ifeq ($(CCFLAGS),)
 endif
 
 ifeq ($(LDFLAGS),)
-    LDFLAGS = -pthread -lrt -lwiringPi
+    LDFLAGS = -pthread -lrt
 endif
 
-TARGET = ./server/aesdsocket
+TARGET = ./joystick_test
 
 all: $(TARGET)
 
