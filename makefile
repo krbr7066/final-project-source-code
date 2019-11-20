@@ -30,26 +30,15 @@ ifeq ($(CC),)
      CC = $(CROSS_COMPILE)gcc
 endif
  
-ifeq ($(CFLAGS),)
-     CFLAGS  = -g -Wall
+ifeq ($(CCFLAGS),)
+     CCFLAGS  = -g -Wall
 endif
  
 ifeq ($(LDFLAGS),)
      LDFLAGS = -L/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
 endif
 
-
-#DEBUG	= -g -O0
 DEBUG	= -O3
-#CC	= gcc
-#INCLUDE	= -I/usr/local/include
-#CFLAGS	= $(DEBUG) -Wall $(INCLUDE) -Winline -pipe
-
-#LDFLAGS	= -L/usr/local/lib
-#LDLIBS    = -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
-
-# Should not alter anything below this line
-###############################################################################
 
 TARGET	=	joystick.c                          
 
