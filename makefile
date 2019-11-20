@@ -59,6 +59,9 @@ BINS	=	$(TARGET:.c=)
 
 all:	joystick
 
+CROSS_COMPILE:
+	arm-unknown-linux-gnueabi-gcc joystick.c -o joystick
+
 really-all:	$(BINS)
 
 joystick:	joystick.c
