@@ -63,7 +63,9 @@ really-all:	$(BINS)
 
 joystick:	joystick.c
 	$Q echo [link]
-	$Q $(CC) -o $@ joystick.o $(LDFLAGS) 
+	$Q $(CC) -o joystick joystick.c $(LDFLAGS)
+#	$Q $(CC) -o $@ joystick.o $(LDFLAGS)
+ 
 #$(LDLIBS)
 
 #$(TARGET):	$(TARGET).c
