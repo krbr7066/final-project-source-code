@@ -11,7 +11,7 @@ ifeq ($(CCFLAGS),)
 endif
  
 ifeq ($(LDFLAGS),)
-     LDFLAGS = -L/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
+     LDFLAGS = -l/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
 endif
 
 TARGET	=	joystick.c                          
@@ -20,8 +20,6 @@ all:	joystick
 
 CROSS_COMPILE:
 	arm-unknown-linux-gnueabi-gcc joystick.c -o joystick $(LDFLAGS)
-
-really-all:	$(BINS)
 
 joystick:	joystick.c
 	$(CC) -o joystick joystick.c $(LDFLAGS)
