@@ -11,7 +11,8 @@ ifeq ($(CCFLAGS),)
 endif
  
 ifeq ($(LDFLAGS),)
-     LDFLAGS = -l/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
+    # LDFLAGS = -l/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
+    LDFLAGS=$(LDFLAGS)
 endif
 
 TARGET	=	joystick.c                          
