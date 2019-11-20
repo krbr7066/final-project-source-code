@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "wiringpi/wiringPi/wiringPi.h"
-#include "wiringpi/wiringPi/mcp3004.h"
-#include "wiringpi/wiringPi/wiringPiSPI.h"
+#include "spi-driver/wiringPi.h"
+#include "spi-driver/mcp3004.h"
+#include "spi-driver/wiringPiSPI.h"
 
 #define BASE 100
 #define SPI_CHAN 0
