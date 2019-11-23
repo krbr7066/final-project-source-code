@@ -7,7 +7,7 @@
 
 #include <wiringPiSPI.h>
 
-#define CHANNEL 0
+#define CHANNEL 1
 
 void main(int argc, char** argv) {
 	uint8_t on[] = { 0xFF, 0xFF };
