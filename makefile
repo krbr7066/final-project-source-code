@@ -19,7 +19,8 @@ endif
 
 SRC =   led.c         \
         joystick.c    \
-        scroll.c                 
+        scroll.c      \
+        test.c           
 
 BINS    =   $(SRC:.c=)
 
@@ -36,6 +37,9 @@ led:    led.c
 
 scroll:    scroll.c
 	$(CC) -o scroll scroll.c $(LDFLAGS)
+
+test:   test.c
+	$(CC) -o test test.c $(LDFLAGS)
 
 #$(TARGET):	$(TARGET).c
 #	$(CC) $(CCFLAGS) -o $(TARGET) $(TARGET).c $(LDFLAGS) 
