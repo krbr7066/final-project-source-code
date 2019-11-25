@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-extern int usleep(int usecs);
 
 #include <wiringPiSPI.h>
 

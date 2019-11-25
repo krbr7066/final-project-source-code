@@ -18,7 +18,8 @@ endif
 #TARGET	=	joystick.c     
 
 SRC =   led.c         \
-        joystick.c                     
+        joystick.c    \
+        scroll.c                 
 
 BINS    =   $(SRC:.c=)
 
@@ -32,6 +33,9 @@ joystick:	joystick.c
 
 led:    led.c
 	$(CC) -o led led.c $(LDFLAGS)  
+
+scroll:    scroll.c
+	$(CC) -o scroll scroll.c $(LDFLAGS)
 
 #$(TARGET):	$(TARGET).c
 #	$(CC) $(CCFLAGS) -o $(TARGET) $(TARGET).c $(LDFLAGS) 
