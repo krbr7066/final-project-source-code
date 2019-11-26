@@ -71,15 +71,15 @@ void scroll(const char* text) {
 }
 
 void main(int argc, char** argv) {
-	//char* registerVal = argv[0];
-    //char* dataVal = argv[1];
-    char *p;
+	char* text = argv[0];
 
-    uint8_t registerVal = strtol(argv[1], &p, 10);
-    uint8_t dataVal = strtol(argv[2], &p, 10);
+	if (argc > 1) {
+		text = argv[1];
+  }
+
 	setupLEDMatrix(CHANNEL);
 	for (;;) {
-		spi(registerVal, dataVal);
-    }
-	
+		scroll(text);
+		spichar(' ');
+	}
 }

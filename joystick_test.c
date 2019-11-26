@@ -1,12 +1,13 @@
 // rp-mcp3008 Reads analogue values through MCP3008 chip
+//Source: http://www.noveldevices.co.uk/rp-mcp3008
 
-
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "wiringPi.h"
-#include "mcp3004.h"
-#include "wiringPiSPI.h"
+#include <wiringPi.h>
+#include <mcp3004.h>
+#include <wiringPiSPI.h>
 
 #define BASE 100
 #define SPI_CHAN 0

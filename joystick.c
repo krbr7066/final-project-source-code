@@ -8,23 +8,38 @@
 #include <wiringPi.h>
 #include <mcp3004.h>
 #include <wiringPiSPI.h>
+#include <errno.h>
+#include "joystick.h"
 
 #define BASE 100
 #define SPI_CHAN 0
 
-int main (int argc, char *argv[])
-{
-	int i;
+joystick_t joyGlobal;
 
-	printf("wiringPiSPISetup RC=%d\n",wiringPiSPISetup(0,500000));
+int setupJoystick(){
 
-	mcp3004Setup(BASE,SPI_CHAN);
-	
-// Loop indefinitely, waiting for 100ms between each set of data
-	while(1)
-	{	for(i=0;i<8;i++)printf("Channel %d: value=%4d\n",i,analogRead(BASE+i));
-		printf("\n");
-		usleep(500000);
-	}
+	if (wiringPiSPISetup(SPI_CHAN,500000) < 0) {
+        fprintf (stderr, "SPI for Joystick Setup Failed: %s\n", strerror(errno));
+        exit(errno);
+        return -1;
+    }
+
+    if (mcp3004Setup(BASE,SPI_CHAN) < 0) {
+        fprintf (stderr, "MCP3008 Setup Failed: %s\n", strerror(errno));
+        exit(errno);  
+        return -1;
+    }
+    
+    return 0;
+}
+
+void readJoystick(){
+    joyGlobal.xAxis = 512;
+    joyGlobal.yAxis = 512;
+   // joyGlobal.xAxis = analogRead(BASE+1);
+   // joyGlobal.yAxis = analogRead(BASE+2);
+//    printf("Channel 0: value=%4d\n", analogRead(BASE+0)); //SW Values
+    printf("\nChannel 1: value=%4d", joyGlobal.xAxis); //X Values
+    printf("\nChannel 2: value=%4d", joyGlobal.yAxis); //Y Values
 }
 

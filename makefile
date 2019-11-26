@@ -2,17 +2,18 @@ ifneq ($V,1)
 Q ?= @
 endif
 
+INCLUDES_COMMON= -I includes/
+
 ifeq ($(CC),)
      CC = $(CROSS_COMPILE)gcc
 endif
  
 ifeq ($(CCFLAGS),)
-     CCFLAGS  = -g -Wall
+     CCFLAGS  = -g -Wall $(INCLUDES_COMMON)
 endif
  
 ifeq ($(LDFLAGS),)
-    LDFLAGS = -L/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt
-   
+    LDFLAGS = -L/usr/local/lib -lwiringPi -lwiringPiDev -lpthread -lm -lcrypt -lrt   
 endif
 
 #TARGET	=	joystick.c     
@@ -20,7 +21,8 @@ endif
 SRC =   led.c         \
         joystick.c    \
         scroll.c      \
-        test.c           
+        test.c        \
+        main.c   
 
 BINS    =   $(SRC:.c=)
 
@@ -30,19 +32,19 @@ CROSS_COMPILE:
 	arm-unknown-linux-gnueabi-gcc joystick.c -o joystick $(LDFLAGS)
 
 joystick:	joystick.c
-	$(CC) -o joystick joystick.c $(LDFLAGS)
+	$(CC) $(CCFLAGS) -o joystick joystick.c $(LDFLAGS)
 
 led:    led.c
-	$(CC) -o led led.c $(LDFLAGS)  
+	$(CC) $(CCFLAGS) -o led led.c $(LDFLAGS)  
 
 scroll:    scroll.c
-	$(CC) -o scroll scroll.c $(LDFLAGS)
+	$(CC) $(CCFLAGS) -o scroll scroll.c $(LDFLAGS)
 
 test:   test.c
-	$(CC) -o test test.c $(LDFLAGS)
+	$(CC) $(CCFLAGS) -o test test.c $(LDFLAGS)
 
-#$(TARGET):	$(TARGET).c
-#	$(CC) $(CCFLAGS) -o $(TARGET) $(TARGET).c $(LDFLAGS) 
+main:   main.c
+	$(CC) $(CCFLAGS) -o main main.c $(LDFLAGS)
 
 .c.o:
 	$Q echo [CC] $<
