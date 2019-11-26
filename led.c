@@ -27,7 +27,8 @@ void clearScreen(){
         wiringPiSPIDataRW(CHANNEL, buf, 2);
         usleep(20);
     }
-    buf = {0xFF, 0x00}
+    buf[0] = 0xFF;
+    buf[1] = 0x00;
     wiringPiSPIDataRW(CHANNEL, buf, 2);
 }
 
