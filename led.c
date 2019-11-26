@@ -27,6 +27,8 @@ void clearScreen(){
         wiringPiSPIDataRW(CHANNEL, buf, 2);
         usleep(20);
     }
+    buf = {0xFF, 0x00}
+    wiringPiSPIDataRW(CHANNEL, buf, 2);
 }
 
 void setupLEDDisplay(){
