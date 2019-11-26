@@ -18,10 +18,9 @@ endif
 
 #TARGET	=	joystick.c     
 
-SRC =   led.c         \
-        joystick.c    \
+SRC =   led_test.c         \
+        joystick_test.c    \
         scroll.c      \
-        test.c        \
         main.c   
 
 BINS    =   $(SRC:.c=)
