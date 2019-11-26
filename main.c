@@ -44,7 +44,7 @@ void * led_thread(void *arg){
     #endif
     while(1){
         convertJoytoLED();
-        usleep(50000);
+        usleep(500000);
     }
 }
 
