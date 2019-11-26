@@ -21,10 +21,12 @@ void writeLED(uint8_t reg, uint8_t val) {
  }
 
 void clearScreen(){
-    buf[0] = 0xFF;
-    buf[1] = 0x00;
-    wiringPiSPIDataRW(CHANNEL, buf, 2);
-    usleep(20);
+    for (int i = 0; i < 8; i++) {
+        buf[0] = i;
+        buf[1] = 0x00;
+        wiringPiSPIDataRW(CHANNEL, buf, 2);
+        usleep(20);
+    }
 }
 
 void setupLEDDisplay(){
@@ -54,8 +56,8 @@ void convertJoytoLED(){
         } else {
             xDir--;
         }
-    } else if (xLookup > 500) {
-        printf("\nX greater than 500");
+    } else if (xLookup > 550) {
+        printf("\nX greater than 550");
         if (xDir == 7) {
             xDir = 7;
         } else {
@@ -70,8 +72,8 @@ void convertJoytoLED(){
         } else {
             yDir--;
         }
-    } else if (yLookup > 500) {
-        printf("\nY greater than 500");
+    } else if (yLookup > 550) {
+        printf("\nY greater than 550");
         if (yDir == 7) {
             yDir = 7;
         } else {
@@ -82,5 +84,6 @@ void convertJoytoLED(){
     uint8_t val = XValues[xDir];
     printf("\nReg: %02X Val: %02X", reg, val);
     writeLED(reg, val);
+    clearScreen();
 }
 
