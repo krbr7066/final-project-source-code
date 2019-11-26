@@ -17,7 +17,7 @@ void writeLED(uint8_t reg, uint8_t val) {
      buf[0] = reg;
      buf[1] = val;
      wiringPiSPIDataRW(CHANNEL, buf, 2);
-     usleep(20);
+     usleep(50);
  }
 
 void clearScreen(){
@@ -83,7 +83,7 @@ void convertJoytoLED(){
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
     printf("\nReg: %02X Val: %02X", reg, val);
-    writeLED(reg, val);
     clearScreen();
+    writeLED(reg, val);
 }
 
