@@ -44,7 +44,6 @@ void * led_thread(void *arg){
     #endif
     while(1){
         convertJoytoLED();
-        sleep(1);
     }
 }
 
@@ -65,7 +64,9 @@ int main(int argc, char *argv[])
 
     printf("\nSetting up LED Display");
     setupLEDDisplay();
-    
+
+    /* Clear Screen */
+    clearScreen();    
     
     signal(SIGALRM, on_alarm);
     alarm(alarm_period);
