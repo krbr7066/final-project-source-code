@@ -6,7 +6,7 @@
 *
 */
 #include "led.c"
-#include "joystick.c"
+#include "joystick.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +23,7 @@ unsigned int alarm_period = 1;
 
 void * led_thread(void *arg){
     printf("In led thread");
+    #if 0
     while(1){
         writeLED(0x1, 0x1);
         clearScreen();
@@ -39,6 +40,11 @@ void * led_thread(void *arg){
         writeLED(0x7, 0x40);
         clearScreen();
         writeLED(0x8, 0x80);
+    }
+    #endif
+    while(1){
+        convertJoytoLED();
+        sleep(1);
     }
 }
 
