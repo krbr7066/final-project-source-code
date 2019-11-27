@@ -3,7 +3,8 @@
 * Date: November 14, 2019
 * File: main.c
 * Description:
-*
+* Open Sources Used:
+* https://stackoverflow.com/questions/2086126/need-programs-that-illustrate-use-of-settimer-and-alarm-functions-in-gnu-c
 */
 #include "led.c"
 #include "joystick.h"
@@ -16,41 +17,23 @@
 #include <wiringPiSPI.h>
 #include <signal.h>
 #include <pthread.h>
+#include <sys/time.h>
 
-//struct joystick joyGlobal;
 int alarm_stop = 0;
 unsigned int alarm_period = 1;
 
+#define INTERVAL 250
+
 void * led_thread(void *arg){
     printf("In led thread");
-    #if 0
-    while(1){
-        writeLED(0x1, 0x1);
-        clearScreen();
-        writeLED(0x2, 0x2);
-        clearScreen();
-        writeLED(0x3, 0x4);
-        clearScreen();
-        writeLED(0x4, 0x8);
-        clearScreen();
-        writeLED(0x5, 0x10);
-        clearScreen();
-        writeLED(0x6, 0x20);
-        clearScreen();
-        writeLED(0x7, 0x40);
-        clearScreen();
-        writeLED(0x8, 0x80);
-    }
-    #endif
+    
     while(1){
         convertJoytoLED();
-        usleep(500000);
+        usleep(250000);
     }
 }
 
 void on_alarm(){
-    if (alarm_stop) return;
-    else alarm(alarm_period);
     printf("\nIn read joystick");
     readJoystick();
     printf("\nXAxis: %4d", joyGlobal.xAxis);
@@ -58,8 +41,24 @@ void on_alarm(){
 }
 
 int main(int argc, char *argv[])
-{
+{   
     pthread_t ledThread;
+    struct itimerval it_val;  /* for setting itimer */
+
+    /* Upon SIGALRM, call DoStuff().
+    * Set interval timer.  We want frequency in ms, 
+    * but the setitimer call needs seconds and useconds. */
+    if (signal(SIGALRM, (void (*)(int)) on_alarm) == SIG_ERR) {
+        perror("Unable to catch SIGALRM");
+        exit(1);
+    }
+    it_val.it_value.tv_sec =     INTERVAL/1000;
+    it_val.it_value.tv_usec =    (INTERVAL*1000) % 1000000;   
+    it_val.it_interval = it_val.it_value;
+    if (setitimer(ITIMER_REAL, &it_val, NULL) == -1) {
+        perror("error calling setitimer()");
+        exit(1);
+    }
     printf("\nSetting up joystick");
     setupJoystick();
 
@@ -69,8 +68,8 @@ int main(int argc, char *argv[])
     /* Clear Screen */
     clearScreen();    
     
-    signal(SIGALRM, on_alarm);
-    alarm(alarm_period);
+    //signal(SIGALRM, on_alarm);
+    //alarm(alarm_period);
 
     /* Thread to handle LED */
     printf("\nLED Thread");
