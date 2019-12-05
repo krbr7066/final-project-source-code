@@ -43,10 +43,10 @@ static void signal_handler (int signo)
       setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
      
      if (signo == SIGINT){
-         printf ("Caught signal, exiting.\n");
+         printf ("\nCaught signal, exiting.\n");
          syslog (LOG_INFO, "\nCaught signal, exiting.");
      } else if (signo == SIGTERM) {
-         printf ("Caught signal, exiting.\n");
+         printf ("\nCaught signal, exiting.\n");
          syslog (LOG_INFO, "\nCaught signal, exiting.");
      } else {
          /* this should never happen */

@@ -76,7 +76,7 @@ void convertJoytoLED(){
         printf("\nY less than 500");
         up = true;
         if (yDir == 0) {
-            yDir = 0;
+            yDir = 7;
         } else {
             yDir--;
         }
@@ -84,7 +84,7 @@ void convertJoytoLED(){
         printf("\nY greater than 550");
         down = true;
         if (yDir == 7) {
-            yDir = 7;
+            yDir = 0;
         } else {
             yDir++;
         }
@@ -114,5 +114,9 @@ void convertJoytoLED(){
     printf("\nReg: %02X Val: %02X", reg, val);
     clearScreen();
     writeLED(reg, val);
+    up = false;
+    down = false;
+    left = false;
+    right = false;
 }
 
