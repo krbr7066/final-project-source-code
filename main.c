@@ -18,11 +18,80 @@
 #include <signal.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <syslog.h>
 
+int output_fd, sockfd;
+int terminate;
 int alarm_stop = 0;
 unsigned int alarm_period = 1;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 #define INTERVAL 250
+#define FILENAME "/var/tmp/joystickData.txt"
+
+static void signal_handler (int signo)
+ {   
+     terminate = 1;
+      
+      struct timeval tv;
+      tv.tv_sec = 1;
+      tv.tv_usec = 250;
+      setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+     
+     if (signo == SIGINT){
+         printf ("Caught signal, exiting.\n");
+         syslog (LOG_INFO, "\nCaught signal, exiting.");
+     } else if (signo == SIGTERM) {
+         printf ("Caught signal, exiting.\n");
+         syslog (LOG_INFO, "\nCaught signal, exiting.");
+     } else {
+         /* this should never happen */
+         fprintf (stderr, "Unexpected signal!\n");
+         syslog (LOG_INFO, "Caught unexpected signal.");
+     }
+ }
+
+
+void * log_thread(void *arg){
+    int errnum, error;
+    char *direction;
+    printf("\nIn log thread");
+    while(1) {
+        direction = joyGlobal.Dir;
+        printf("\nWrite %s", direction);
+        if( access(FILENAME, F_OK ) != -1 ) {
+            output_fd = open(FILENAME,O_RDWR | O_APPEND, S_IRWXU | S_IRWXG | S_IRWXO); //file exists
+ 
+            if (output_fd == -1){
+                errnum = errno;
+                fprintf(stderr, "Open Error: %s\n", strerror( errnum ));
+            } else if (output_fd > 0) {
+                printf("\nSuccesfully opened file");
+            }
+        } else { //create file
+            output_fd = open(FILENAME, O_RDWR|O_CREAT|O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
+ 
+            if (output_fd == -1){
+                errnum = errno;
+                fprintf(stderr, "Create Error: %s\n", strerror( errnum ));
+            } else if (output_fd > 0) {
+                printf("\nSuccesfully created file");
+            }
+        }
+        pthread_mutex_lock(&lock);
+        error = write(output_fd, direction, strlen(direction));
+        if (error == -1) {
+            printf("\nWrite error");
+        }
+        pthread_mutex_unlock(&lock);
+        usleep(250000);
+    } /* while */
+
+}
 
 void * led_thread(void *arg){
     printf("In led thread");
@@ -42,7 +111,7 @@ void on_alarm(){
 
 int main(int argc, char *argv[])
 {   
-    pthread_t ledThread;
+    pthread_t ledThread, logThread;
     struct itimerval it_val;  /* for setting itimer */
 
     /* Upon SIGALRM, call DoStuff().
@@ -59,6 +128,20 @@ int main(int argc, char *argv[])
         perror("error calling setitimer()");
         exit(1);
     }
+
+    terminate = 0;
+
+    if (signal (SIGINT, signal_handler) == SIG_ERR) {
+         fprintf (stderr, "Cannot handle SIGINT!\n");
+         exit (EXIT_FAILURE);
+     }
+ 
+     if (signal (SIGTERM, signal_handler) == SIG_ERR) {
+         fprintf (stderr, "Cannot handle SIGTERM!\n");
+         exit (EXIT_FAILURE);
+     }
+
+
     printf("\nSetting up joystick");
     setupJoystick();
 
@@ -68,21 +151,32 @@ int main(int argc, char *argv[])
     /* Clear Screen */
     clearScreen();    
     
-    //signal(SIGALRM, on_alarm);
-    //alarm(alarm_period);
-
+    /* Initialize joystick struct */
+    joyGlobal.xAxis = 525;
+    joyGlobal.yAxis = 525;
+    joyGlobal.Dir = "";
     /* Thread to handle LED */
     printf("\nLED Thread");
     if(pthread_create(&ledThread, NULL, led_thread, (void*)NULL) < 0) {
-        printf("\nFailed to create thread\n");
+        printf("\nFailed to create LED thread\n");
     }
+
+    /* Thread to handle logging */
+    printf("\nLogging Thread");
+    if(pthread_create(&logThread, NULL, log_thread, (void*)NULL) < 0) {
+        printf("\nFailed to create LOG thread\n");
+    }
+
 
     while(1){
-        printf("\nRun");
+        if (terminate == 1){
+            printf("\nTerminating");
+            close(output_fd);
+            remove(FILENAME);
+            exit(0);
+        }
         sleep(5);
     }
-
-
     
     return 0;
 }

@@ -7,6 +7,7 @@
 typedef struct { 
    int xAxis; 
    int yAxis;
+   char *Dir;
 } joystick_t;
 
 //extern joystick_t joyGlobal;

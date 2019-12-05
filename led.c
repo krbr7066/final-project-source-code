@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <wiringPiSPI.h>
+#include <stdbool.h> 
 #include "led.h"
 #include "joystick.c"
 #include "lookup.h"
@@ -51,9 +52,11 @@ void convertJoytoLED(){
    static int yDir = 4;
    int xLookup = joyGlobal.xAxis;
    int yLookup = joyGlobal.yAxis;
+   bool left, right, up, down = false;
  
    if (xLookup < 500) {
         printf("\nX less than 500");
+        left = true;
         if (xDir == 0) {
             xDir = 0;
         } else {
@@ -61,6 +64,7 @@ void convertJoytoLED(){
         }
     } else if (xLookup > 550) {
         printf("\nX greater than 550");
+        right = true;
         if (xDir == 7) {
             xDir = 7;
         } else {
@@ -70,6 +74,7 @@ void convertJoytoLED(){
 
     if (yLookup < 500) {
         printf("\nY less than 500");
+        up = true;
         if (yDir == 0) {
             yDir = 0;
         } else {
@@ -77,12 +82,33 @@ void convertJoytoLED(){
         }
     } else if (yLookup > 550) {
         printf("\nY greater than 550");
+        down = true;
         if (yDir == 7) {
             yDir = 7;
         } else {
             yDir++;
         }
     }
+
+    if (up && left)
+        joyGlobal.Dir = "\nUP-LEFT";
+    else if (up && right)
+        joyGlobal.Dir = "\nUP-RIGHT";
+    else if (down && left)
+        joyGlobal.Dir = "\nDOWN-LEFT";
+    else if (down && right)
+        joyGlobal.Dir = "\nDOWN-RIGHT";
+    else if (down)
+        joyGlobal.Dir = "\nDOWN";
+    else if (up)
+        joyGlobal.Dir = "\nUP";
+    else if (left)
+        joyGlobal.Dir = "\nLEFT";
+    else if (right)
+        joyGlobal.Dir = "\nRIGHT";
+    else
+        printf("\nError getting direction");
+
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
     printf("\nReg: %02X Val: %02X", reg, val);
