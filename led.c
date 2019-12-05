@@ -112,16 +112,12 @@ void convertJoytoLED(){
     else if (right)
         joyGlobal.Dir = "\nRIGHT";
     else
-        printf("\nError getting direction");
+        joyGlobal.Dir = "";
 
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
     printf("\nReg: %02X Val: %02X", reg, val);
     clearScreen();
     writeLED(reg, val);
-   // up = false;
-   // down = false;
-   // left = false;
-   // right = false;
 }
 

@@ -37,7 +37,7 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 #define INTERVAL 250
 #define FILENAME "/var/tmp/joystickData.txt"
-#define MYPORT "9000"
+#define MYPORT "51717"
 #define BACKLOG 50
 
 struct threadInfo {
