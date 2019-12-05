@@ -132,7 +132,7 @@ void * sendFile(void *arg){
 
 void on_alarm(){
     printf("\nIn read joystick");
-//    readJoystick();
+    readJoystick();
     printf("\nXAxis: %4d", joyGlobal.xAxis);
     printf("\nYAxis: %4d", joyGlobal.yAxis);
 }
@@ -222,13 +222,13 @@ int main(int argc, char *argv[])
      }
 
     printf("\nSetting up joystick");
-  //  setupJoystick();
+    setupJoystick();
 
     printf("\nSetting up LED Display");
- //   setupLEDDisplay();
+    setupLEDDisplay();
 
     /* Clear Screen */
- //   clearScreen();    
+    clearScreen();    
     
     /* Initialize joystick struct */
     joyGlobal.xAxis = 525;
