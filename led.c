@@ -50,15 +50,17 @@ void setupLEDDisplay(){
 void convertJoytoLED(){
    static int xDir = 4;
    static int yDir = 4;
-   int xLookup = joyGlobal.xAxis;
-   int yLookup = joyGlobal.yAxis;
+//   int xLookup = joyGlobal.xAxis;
+//   int yLookup = joyGlobal.yAxis;
+    int xLookup = 525;
+    int yLookup = 100;
    bool left, right, up, down = false;
  
    if (xLookup < 500) {
         printf("\nX less than 500");
         left = true;
         if (xDir == 0) {
-            xDir = 0;
+            xDir = 7;
         } else {
             xDir--;
         }
@@ -66,7 +68,7 @@ void convertJoytoLED(){
         printf("\nX greater than 550");
         right = true;
         if (xDir == 7) {
-            xDir = 7;
+            xDir = 0;
         } else {
             xDir++;
         }
@@ -112,8 +114,8 @@ void convertJoytoLED(){
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
     printf("\nReg: %02X Val: %02X", reg, val);
-    clearScreen();
-    writeLED(reg, val);
+//    clearScreen();
+//    writeLED(reg, val);
     up = false;
     down = false;
     left = false;

@@ -23,6 +23,11 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <syslog.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include "../queue.h"
+#include <arpa/inet.h>
 
 int output_fd, sockfd;
 int terminate;
@@ -32,6 +37,16 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 #define INTERVAL 250
 #define FILENAME "/var/tmp/joystickData.txt"
+#define MYPORT "9000"
+#define BACKLOG 50
+
+struct threadInfo {
+     int flag;
+     int fd;
+     pthread_t pid;
+     SLIST_ENTRY(threadInfo) entries;
+} *item, *item_temp, *test;
+
 
 static void signal_handler (int signo)
  {   
@@ -94,7 +109,7 @@ void * log_thread(void *arg){
 }
 
 void * led_thread(void *arg){
-    printf("In led thread");
+    printf("\nIn led thread");
     
     while(1){
         convertJoytoLED();
@@ -102,17 +117,36 @@ void * led_thread(void *arg){
     }
 }
 
+void * sendFile(void *arg){
+    pthread_t tid;
+
+    printf("\nIn Send File");
+    struct threadInfo *newItem = (struct threadInfo*) arg;
+    tid = pthread_self();
+    newItem->pid = tid;
+    
+    close(newItem->fd);
+    pthread_exit(NULL);
+    newItem->flag = 1;
+}
+
 void on_alarm(){
     printf("\nIn read joystick");
-    readJoystick();
+//    readJoystick();
     printf("\nXAxis: %4d", joyGlobal.xAxis);
     printf("\nYAxis: %4d", joyGlobal.yAxis);
 }
 
 int main(int argc, char *argv[])
 {   
-    pthread_t ledThread, logThread;
+    pthread_t ledThread, logThread, tid;
     struct itimerval it_val;  /* for setting itimer */
+    struct sockaddr_in their_addr; /* connector's address information */
+    socklen_t addr_size;
+    struct addrinfo hints, *res;
+    int success = 0;
+    int opt = 1;
+    int new_fd, errnum, status;
 
     /* Upon SIGALRM, call DoStuff().
     * Set interval timer.  We want frequency in ms, 
@@ -129,6 +163,13 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    //Initialize singly linked list
+     item = (struct threadInfo *) malloc(sizeof(struct threadInfo));
+ 
+     SLIST_HEAD(slisthead, threadInfo) head;
+     SLIST_INIT(&head);
+
+
     terminate = 0;
 
     if (signal (SIGINT, signal_handler) == SIG_ERR) {
@@ -141,15 +182,53 @@ int main(int argc, char *argv[])
          exit (EXIT_FAILURE);
      }
 
+     memset(&hints, 0, sizeof hints);
+     hints.ai_family = AF_INET;  // use IPv4 or IPv6, whichever
+     hints.ai_socktype = SOCK_STREAM;
+     hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+ 
+     status = getaddrinfo(NULL, MYPORT, &hints, &res);
+     if (status < 0) {
+     printf("\ngetaddrinfo error");
+     }
+    
+     // make a socket, bind it, and listen on it:
+     sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+     if (sockfd < 0) {
+         errnum = errno;
+         fprintf(stderr, "Sockfd Error: %s\n", strerror( errnum ));
+      }
+
+    if( setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt,
+           sizeof(opt)) < 0 )
+     {
+         perror("setsockopt");
+         exit(EXIT_FAILURE);
+     }
+ 
+     new_fd = bind(sockfd, res->ai_addr, res->ai_addrlen);
+     if (new_fd < 0) {
+         errnum = errno;
+         fprintf(stderr, "Bind Error: %s\n", strerror( errnum ));
+     } else {
+         printf("\nBind");
+     }
+    
+    if (listen(sockfd, BACKLOG) == -1) {
+         errnum = errno;
+         fprintf(stderr, "Listen Error: %s\n", strerror( errnum ));
+     } else {
+         printf("\nListen");
+     }
 
     printf("\nSetting up joystick");
-    setupJoystick();
+  //  setupJoystick();
 
     printf("\nSetting up LED Display");
-    setupLEDDisplay();
+ //   setupLEDDisplay();
 
     /* Clear Screen */
-    clearScreen();    
+ //   clearScreen();    
     
     /* Initialize joystick struct */
     joyGlobal.xAxis = 525;
@@ -165,18 +244,51 @@ int main(int argc, char *argv[])
     printf("\nLogging Thread");
     if(pthread_create(&logThread, NULL, log_thread, (void*)NULL) < 0) {
         printf("\nFailed to create LOG thread\n");
-    }
-
+    }    
 
     while(1){
+
+        success = 0;
+
         if (terminate == 1){
             printf("\nTerminating");
             close(output_fd);
             remove(FILENAME);
             exit(0);
         }
-        sleep(5);
-    }
-    
+
+        addr_size = sizeof their_addr;
+ 
+         new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);    
+         if (new_fd < 0) {
+             errnum = errno;
+             fprintf(stderr, "Accept Error: %s\n", strerror( errnum ));
+         } else {
+             syslog (LOG_INFO, "Accepted connection from %s", inet_ntoa(their_addr.sin_addr));
+             printf("\nAccepted connection from %s", inet_ntoa(their_addr.sin_addr));
+             success = 1;
+         }
+     if(success) {
+        item = (struct threadInfo *) malloc(sizeof(struct threadInfo));
+        //Create thread
+        item->fd = new_fd;
+        if(pthread_create(&tid, NULL, sendFile, (void*)item) == 0) {
+             SLIST_INSERT_HEAD(&head, item, entries);
+         } else {
+             printf("Failed to create thread\n");
+         }
+
+    //Check if thread completes 
+    SLIST_FOREACH_SAFE(test, &head, entries, item_temp){
+         if (test->flag == 1) {
+             pthread_join(test->pid, NULL);
+             SLIST_REMOVE(&head, test, threadInfo, entries);
+             free(test);
+         }
+     }
+
+
+        } /* success */
+    } /* while */
     return 0;
-}
+} /* main */
