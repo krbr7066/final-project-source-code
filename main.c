@@ -26,7 +26,7 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "../queue.h"
+#include "queue.h"
 #include <arpa/inet.h>
 
 int output_fd, sockfd;
