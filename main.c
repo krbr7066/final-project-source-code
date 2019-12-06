@@ -113,7 +113,7 @@ void * led_thread(void *arg){
     
     while(1){
         convertJoytoLED();
-        usleep(250000);
+        usleep(150000);
     }
 }
 
@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
         success = 0;
 
         if (terminate == 1){
-            printf("\nTerminating");
+            printf("\nTerminating\n");
             close(output_fd);
             remove(FILENAME);
             exit(0);

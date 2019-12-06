@@ -121,11 +121,6 @@ void convertJoytoLED(){
     else
         joyGlobal.Dir = "";
 
-   // uint8_t reg = YValues[yDir];
-   // uint8_t val = XValues[xDir];
-  //  printf("\nReg: %02X Val: %02X", reg, val);
-    //clearScreen();
-    //writeLED(reg, val);
     if (ledMode == 0){
         singleLED(yDir, xDir);
     } else if (ledMode == 1) {
@@ -146,7 +141,7 @@ void multipleLEDs(int yDir, int xDir){
     int i;
     printf("\nIn multiLED X Dir: %d Y Dir: %d", yDir, xDir);
     ledMatrix[yDir][xDir] = 1;
-    printf("LedMatrix: %d", ledMatrix[yDir][xDir]);
+//    printf("LedMatrix: %d", ledMatrix[yDir][xDir]);
     for (i = 0; i < 8; i++){
         dec = arrayToHex(i);
         printf("\nReg %02X, Val:%02X", i, dec);
