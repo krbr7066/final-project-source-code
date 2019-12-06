@@ -6,6 +6,8 @@
 #include <wiringPiSPI.h>
 #include "map.inc"
 
+uint8_t on[] = { 0xFF, 0xFF };
+uint8_t off[] = { 0xFF, 0x00 };
 uint8_t buf[2];
 
  void spi(uint8_t reg, uint8_t val) {
@@ -42,8 +44,8 @@ void spichar(char c) {
 
 int main(int argc, char *argv[]){
     int i;
-//    setupJoystick();
-//    setupLEDDisplay();
+    setupJoystick();
+    setupLEDDisplay();
 
     
     if (atoi(argv[1]) == 1){
@@ -58,6 +60,7 @@ int main(int argc, char *argv[]){
      buf[1] = 0x00;
      wiringPiSPIDataRW(CHANNEL, buf, 2);
     } else if (atoi(argv[1]) == 2) {
+        printf("\nClear Screen2");
      for (i = 0; i < 8; i++) {
          buf[0] = i;
          buf[1] = 0x00;
@@ -66,8 +69,20 @@ int main(int argc, char *argv[]){
      }
    
     } else if (atoi(argv[1]) == 3){
+        printf("\nClear Screen3");
         spichar(' ');
-    }      
+    } else if (atoi(argv[1]) == 4){
+         for (;;) {
+             memcpy(buf, on, 2);
+             wiringPiSPIDataRW(CHANNEL, buf, 2);
+             sleep(1);
+            memcpy(buf, off, 2);
+            wiringPiSPIDataRW(CHANNEL, buf, 2);  
+            sleep(1);
+        }
+
+
+}      
         
     return 0;
 }
