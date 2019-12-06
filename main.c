@@ -148,8 +148,15 @@ int main(int argc, char *argv[])
     int opt = 1;
     int new_fd, errnum, status;
 
-    /* Upon SIGALRM, call DoStuff().
-    * Set interval timer.  We want frequency in ms, 
+    if (argc != 2) {
+        printf("\nArgument Error:\n ->Enter 0 for single LED mode\n ->Enter 1 for multi LED mode\n");
+        exit(0);
+    }
+    
+    ledMode = atoi(argv[1]);
+    printf("\nArgument: %d", ledMode);
+
+    /* Set interval timer.  We want frequency in ms, 
     * but the setitimer call needs seconds and useconds. */
     if (signal(SIGALRM, (void (*)(int)) on_alarm) == SIG_ERR) {
         perror("Unable to catch SIGALRM");
@@ -231,8 +238,8 @@ int main(int argc, char *argv[])
     clearScreen();    
     
     /* Initialize joystick struct */
-    joyGlobal.xAxis = 525;
-    joyGlobal.yAxis = 525;
+    joyGlobal.xAxis = 450;
+    joyGlobal.yAxis = 450;
     joyGlobal.Dir = "";
     /* Thread to handle LED */
     printf("\nLED Thread");

@@ -34,7 +34,8 @@ void clearScreen(){
 }
 
 void setupLEDDisplay(){
-
+    int i, j;
+    #if 0
 	if (wiringPiSPISetup(CHANNEL, 1000000) < 0) {
 		fprintf (stderr, "SPI Setup failed: %s\n", strerror(errno));
 		exit(errno);
@@ -44,7 +45,14 @@ void setupLEDDisplay(){
     writeLED(0x0B,0x07);
     writeLED(0x0A,0xFF);
     writeLED(0x0C,0x01);
-
+#endif
+    /* Write 0 to led matrix */
+    for (j = 0; j < 8; j++) {
+        for (i = 0; i < 8; i++) {
+            ledMatrix[j][i] = 0;
+            printf("ledMatrix: %d", ledMatrix[j][i]);
+        }
+    }
 }
 
 void convertJoytoLED(){
@@ -114,10 +122,88 @@ void convertJoytoLED(){
     else
         joyGlobal.Dir = "";
 
+   // uint8_t reg = YValues[yDir];
+   // uint8_t val = XValues[xDir];
+  //  printf("\nReg: %02X Val: %02X", reg, val);
+    //clearScreen();
+    //writeLED(reg, val);
+    if (ledMode == 0){
+        singleLED(yDir, xDir);
+    } else if (ledMode == 1) {
+        multipleLEDs(yDir, xDir);
+    }
+}
+
+void singleLED(int yDir, int xDir){
+    printf("\nIn single led mode");
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
-    printf("\nReg: %02X Val: %02X", reg, val);
     clearScreen();
     writeLED(reg, val);
 }
 
+void multipleLEDs(int yDir, int xDir){
+    int dec;
+    int i;
+    printf("\nIn multiLED X Dir: %d Y Dir: %d", yDir, xDir);
+    ledMatrix[yDir][xDir] = 1;
+    printf("LedMatrix: %d", ledMatrix[yDir][xDir]);
+    for (i = 0; i < 8; i++){
+        dec = arrayToHex(i);
+        printf("\nReg %02X, Val:%02X", i, dec);
+        writeLED(i, dec);
+    }
+}
+
+int arrayToHex(int yAxis){
+    int dec, bin;
+    char first[9];
+    int one = 1;
+    int zero = 0;
+    char tmp[3];
+    int i;
+    printf("\nIn array to hex");
+        for (i = 0; i < 8; i++){
+            printf("\nledMatrix: %d", ledMatrix[yAxis][i]);
+            if(ledMatrix[yAxis][i] == 0){
+                if (i == 0){
+                    sprintf(first, "%d", zero);
+                } else {
+                    sprintf(tmp, "%d", zero);
+                    strcat(first, tmp);
+                }
+            } else {
+                if (i == 0){
+                    sprintf(first, "%d", one);
+                } else {
+                    sprintf(tmp, "%d", one);
+                    strcat(first, tmp);
+                }
+            } 
+        }
+        bin = atoi(first);
+        printf("Binary: %d", bin);
+        dec = binaryToDecimal(bin);
+        return dec;
+}
+/* From: https://www.geeksforgeeks.org/program-binary-decimal-conversion */
+int binaryToDecimal(int n) 
+{ 
+    int num = n; 
+    int dec_value = 0; 
+  
+    // Initializing base value to 1, i.e 2^0 
+    int base = 1; 
+  
+    int temp = num; 
+    while (temp) { 
+        int last_digit = temp % 10; 
+        temp = temp / 10; 
+  
+        dec_value += last_digit * base; 
+  
+        base = base * 2; 
+    } 
+  
+    return dec_value; 
+} 
