@@ -9,8 +9,10 @@
 #include "led.h"
 #include "joystick.c"
 #include "lookup.h"
+#include "map.inc"
 
 uint8_t buf[2];
+uint8_t display[8];
 
 #define CHANNEL 1
 
@@ -20,6 +22,29 @@ void writeLED(uint8_t reg, uint8_t val) {
      wiringPiSPIDataRW(CHANNEL, buf, 2);
      usleep(50);
  }
+
+void push(uint8_t col) {
+     for (int i = 0; i < 7; ++i) {
+          display[i] = display[i+1];
+          display[7] = col;
+     }
+}
+ 
+void show() {
+      for (int i = 0; i < 8; ++i) {
+          writeLED(i+1,display[i]);
+      }
+ }
+ 
+void spichar(char c) {
+      const uint8_t* bits = &font[c * 8];
+      for (int i = 0; i < 8; ++i) {
+          push(bits[i]);
+          show();
+          usleep(100000);
+      }
+ }
+
 
 void clearScreen(){
     for (int i = 0; i < 8; i++) {
@@ -132,7 +157,8 @@ void singleLED(int yDir, int xDir){
     printf("\nIn single led mode");
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
-    clearScreen();
+    //clearScreen();
+    spichar(' ');
     writeLED(reg, val);
 }
 

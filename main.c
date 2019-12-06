@@ -235,7 +235,8 @@ int main(int argc, char *argv[])
     setupLEDDisplay();
 
     /* Clear Screen */
-    clearScreen();    
+//    clearScreen();    
+    spichar(' ');
     
     /* Initialize joystick struct */
     joyGlobal.xAxis = 450;
