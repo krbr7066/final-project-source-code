@@ -35,7 +35,7 @@ void clearScreen(){
 
 void setupLEDDisplay(){
     int i, j;
-    #if 0
+    
 	if (wiringPiSPISetup(CHANNEL, 1000000) < 0) {
 		fprintf (stderr, "SPI Setup failed: %s\n", strerror(errno));
 		exit(errno);
@@ -45,12 +45,11 @@ void setupLEDDisplay(){
     writeLED(0x0B,0x07);
     writeLED(0x0A,0xFF);
     writeLED(0x0C,0x01);
-#endif
+
     /* Write 0 to led matrix */
     for (j = 0; j < 8; j++) {
         for (i = 0; i < 8; i++) {
             ledMatrix[j][i] = 0;
-            printf("ledMatrix: %d", ledMatrix[j][i]);
         }
     }
 }
