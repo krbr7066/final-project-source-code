@@ -9,7 +9,7 @@
 uint8_t on[] = { 0xFF, 0xFF };
 uint8_t off[] = { 0xFF, 0x00 };
 uint8_t buf[2];
-
+#if 0
  void spi(uint8_t reg, uint8_t val) {
      buf[0] = reg;
      buf[1] = val;
@@ -41,7 +41,7 @@ void spichar(char c) {
      }
 }
 
-
+#endif
 int main(int argc, char *argv[]){
     int i;
     setupJoystick();
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
    
     } else if (atoi(argv[1]) == 3){
         printf("\nClear Screen3");
-        spichar(' ');
+      //  spichar(' ');
     } else if (atoi(argv[1]) == 4){
          for (;;) {
              memcpy(buf, on, 2);
