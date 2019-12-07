@@ -41,7 +41,7 @@ void spichar(char c) {
       for (int i = 0; i < 8; ++i) {
           push(bits[i]);
           show();
-          usleep(100000);
+          usleep(50);
       }
  }
 
