@@ -49,8 +49,8 @@ int getData( int sockfd ) {
 
 int main(int argc, char *argv[])
 {
-    int sockfd, portno = 51717, n;
-    char serverIp[] = "127.0.1.1";
+    int sockfd, portno = 2000, n;
+    char serverIp[] = "192.168.1.3";
     struct sockaddr_in serv_addr;
     struct hostent *server;
     char buffer[256];

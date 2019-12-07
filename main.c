@@ -33,11 +33,13 @@ int output_fd, sockfd;
 int terminate;
 int alarm_stop = 0;
 unsigned int alarm_period = 1;
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t writeLock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t readLock = PTHREAD_MUTEX_INITIALIZER;
+
 
 #define INTERVAL 250
 #define FILENAME "/var/tmp/joystickData.txt"
-#define MYPORT "51717"
+#define MYPORT "2000"
 #define BACKLOG 50
 
 struct threadInfo {
@@ -97,12 +99,12 @@ void * log_thread(void *arg){
                 printf("\nSuccesfully created file");
             }
         }
-        pthread_mutex_lock(&lock);
+        pthread_mutex_lock(&writeLock);
         error = write(output_fd, direction, strlen(direction));
         if (error == -1) {
             printf("\nWrite error");
         }
-        pthread_mutex_unlock(&lock);
+        pthread_mutex_unlock(&writeLock);
         usleep(250000);
     } /* while */
 
@@ -119,12 +121,20 @@ void * led_thread(void *arg){
 
 void * sendFile(void *arg){
     pthread_t tid;
-
+    
     printf("\nIn Send File");
     struct threadInfo *newItem = (struct threadInfo*) arg;
     tid = pthread_self();
     newItem->pid = tid;
-    
+    FILE *fp = fopen(FILENAME, "r");    
+    pthread_mutex_lock(&readLock);
+    file_size = fread(buffSend, sizeof(char), sizeof(buffSend), fp);
+    if(send(new_fd, buffSend, file_size, 0) < 0) {
+            perror("Failed to send file");
+    }
+    printf("Sent: %s", buffSend);
+    pthread_mutex_unlock(&readLock);
+
     close(newItem->fd);
     pthread_exit(NULL);
     newItem->flag = 1;

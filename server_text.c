@@ -39,7 +39,7 @@ int getData( int sockfd ) {
 }
 
 int main(int argc, char *argv[]) {
-     int sockfd, newsockfd, portno = 51717, clilen;
+     int sockfd, newsockfd, portno = 2000, clilen;
      char buffer[256];
      struct sockaddr_in serv_addr, cli_addr;
      int n;
