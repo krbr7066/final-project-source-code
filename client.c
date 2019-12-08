@@ -81,6 +81,7 @@ socklen_t len = sizeof (error);
 int retval;
 
     while(1) {
+        memset(buffer, 0, sizeof(buffer));
         retval = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
         
     if (retval != 0) {
@@ -95,11 +96,11 @@ int retval;
     }
 
         if ( (n = read(sockfd,buffer,4096) ) <= 0 ) { 
-            printf( "ERROR reading from socket" );
+            printf( "\nERROR reading from socket" );
             close(sockfd);
             exit(0);
         }
-        printf("%s %d", buffer, n);
+        printf("%s", buffer);
     }
 
 

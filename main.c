@@ -76,7 +76,6 @@ static void signal_handler (int signo)
 void * log_thread(void *arg){
     int errnum, error;
     char *direction;
-//    printf("\nIn log thread");
     while(1) {
         if( access(FILENAME, F_OK ) != -1 ) {
             //Check if file already open
@@ -87,7 +86,7 @@ void * log_thread(void *arg){
                     errnum = errno;
                     fprintf(stderr, "Open Error: %s\n", strerror( errnum ));
                 } else if (output_fd > 0) {
-//                printf("\nSuccesfully opened file");
+                //Succesfully opened file
                 }
                 }
         } else { //create file
@@ -119,8 +118,6 @@ void * log_thread(void *arg){
 }
 
 void * led_thread(void *arg){
-  //  printf("\nIn led thread");
-    
     while(1){
         convertJoytoLED();
         usleep(150000);
@@ -133,7 +130,6 @@ void * sendFile(void *arg){
     int file_size;
     char* direction;
 
-//    printf("\nIn Send File");
     struct threadInfo *newItem = (struct threadInfo*) arg;
     tid = pthread_self();
     newItem->pid = tid;
@@ -164,10 +160,7 @@ void * sendFile(void *arg){
 }
 
 void on_alarm(){
-   // printf("\nIn read joystick");
     readJoystick();
-  //  printf("\nXAxis: %4d", joyGlobal.xAxis);
-  //  printf("\nYAxis: %4d", joyGlobal.yAxis);
 }
 
 int main(int argc, char *argv[])
@@ -261,7 +254,7 @@ int main(int argc, char *argv[])
          printf("\nListening on port %s", MYPORT);
      }
 
-    printf("\nSetting up joystick");
+    printf("\nSetting up Joystick");
     setupJoystick();
 
     printf("\nSetting up LED Display");
@@ -275,8 +268,8 @@ int main(int argc, char *argv[])
     joyGlobal.xAxis = 525;
     joyGlobal.yAxis = 525;
     joyGlobal.Dir = "";
+
     /* Thread to handle LED */
-    //printf("\nLED Thread");
     if(pthread_create(&ledThread, NULL, led_thread, (void*)NULL) < 0) {
         printf("\nFailed to create LED thread\n");
     }
@@ -294,7 +287,7 @@ int main(int argc, char *argv[])
         if (terminate == 1){
             printf("\nTerminating\n");
             close(output_fd);
-            remove(FILENAME);
+    //        remove(FILENAME);
             exit(0);
         }
 
