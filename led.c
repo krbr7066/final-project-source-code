@@ -170,7 +170,6 @@ void multipleLEDs(int yDir, int xDir){
     ledMatrix[yDir][xDir] = 1;
     for (i = 0; i < 8; i++){
         dec = arrayToHex(i);
-        printf("\nReg %02X, Val:%02X", i, dec);
         writeLED(i, dec);
     }
 }
