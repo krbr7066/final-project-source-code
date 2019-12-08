@@ -58,6 +58,7 @@ int retval;
 
     while(1) {
        // memset(buffer, 0, sizeof(buffer));
+        #if 0
         retval = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
         
     if (retval != 0) {
@@ -70,16 +71,15 @@ int retval;
         /* socket has a non zero error status */
         fprintf(stderr, "socket error: %s\n", strerror(error));
     }
-        #if 0
+        
         if ( (n = read(sockfd,buffer,4096) ) <= 0 ) { 
             printf( "\nERROR reading from socket" );
             close(sockfd);
             exit(0);
         }
-        printf("n: %d", n);
         printf("%s", buffer);
     }
-    #endif
+   #endif
 
             memset(buffer, 0, sizeof(buffer)); //clear buffer
 		    n = recv(sockfd, buffer, sizeof(buffer), 0);
@@ -92,7 +92,7 @@ int retval;
                 close(sockfd);
                 exit(0);
             } else {
-			    printf("\nBuffer: %s", buffer);
+			    printf("%s", buffer);
             }
     }
 

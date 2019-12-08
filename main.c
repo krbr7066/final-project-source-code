@@ -128,7 +128,7 @@ void * sendFile(void *arg){
     pthread_t tid;
     char buffSend[4096];
     int file_size;
-    char* direction;
+    char direction[10];
 
     struct threadInfo *newItem = (struct threadInfo*) arg;
     tid = pthread_self();
@@ -144,7 +144,9 @@ void * sendFile(void *arg){
 
     //Continue sending info
     while(1) {
-        direction = joyGlobal.Dir;
+        memset(direction, 0, sizeof(direction));
+        //direction = joyGlobal.Dir;
+        strcpy(direction, joyGlobal.Dir);
         if (strcmp(direction, "") != 0) {
             if (send(newItem->fd, direction, sizeof(direction), 0) < 0) {
                 perror("\nFailed to send direction");
@@ -180,7 +182,6 @@ int main(int argc, char *argv[])
     }
     
     ledMode = atoi(argv[1]);
-    printf("\nArgument: %d", ledMode);
 
     /* Set interval timer.  We want frequency in ms, 
     * but the setitimer call needs seconds and useconds. */
@@ -286,7 +287,7 @@ int main(int argc, char *argv[])
         if (terminate == 1){
             printf("\nTerminating\n");
             close(output_fd);
-    //        remove(FILENAME);
+            remove(FILENAME);
             exit(0);
         }
 
