@@ -121,7 +121,9 @@ void * led_thread(void *arg){
 
 void * sendFile(void *arg){
     pthread_t tid;
-    
+    char buffSend[4096];
+    int file_size;
+
     printf("\nIn Send File");
     struct threadInfo *newItem = (struct threadInfo*) arg;
     tid = pthread_self();
@@ -129,7 +131,7 @@ void * sendFile(void *arg){
     FILE *fp = fopen(FILENAME, "r");    
     pthread_mutex_lock(&readLock);
     file_size = fread(buffSend, sizeof(char), sizeof(buffSend), fp);
-    if(send(new_fd, buffSend, file_size, 0) < 0) {
+    if(send(newItem->fd, buffSend, file_size, 0) < 0) {
             perror("Failed to send file");
     }
     printf("Sent: %s", buffSend);
