@@ -87,7 +87,7 @@ void * log_thread(void *arg){
                 errnum = errno;
                 fprintf(stderr, "Open Error: %s\n", strerror( errnum ));
             } else if (output_fd > 0) {
-                printf("\nSuccesfully opened file");
+//                printf("\nSuccesfully opened file");
             }
         } else { //create file
             output_fd = open(FILENAME, O_RDWR|O_CREAT|O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
@@ -111,7 +111,7 @@ void * log_thread(void *arg){
 }
 
 void * led_thread(void *arg){
-    printf("\nIn led thread");
+  //  printf("\nIn led thread");
     
     while(1){
         convertJoytoLED();
@@ -143,10 +143,10 @@ void * sendFile(void *arg){
 }
 
 void on_alarm(){
-    printf("\nIn read joystick");
+   // printf("\nIn read joystick");
     readJoystick();
-    printf("\nXAxis: %4d", joyGlobal.xAxis);
-    printf("\nYAxis: %4d", joyGlobal.yAxis);
+  //  printf("\nXAxis: %4d", joyGlobal.xAxis);
+  //  printf("\nYAxis: %4d", joyGlobal.yAxis);
 }
 
 int main(int argc, char *argv[])
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
          errnum = errno;
          fprintf(stderr, "Listen Error: %s\n", strerror( errnum ));
      } else {
-         printf("\nListen");
+         printf("\nListening on port %d", MYPORT);
      }
 
     printf("\nSetting up joystick");
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
     joyGlobal.yAxis = 450;
     joyGlobal.Dir = "";
     /* Thread to handle LED */
-    printf("\nLED Thread");
+    //printf("\nLED Thread");
     if(pthread_create(&ledThread, NULL, led_thread, (void*)NULL) < 0) {
         printf("\nFailed to create LED thread\n");
     }

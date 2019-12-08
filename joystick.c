@@ -36,7 +36,7 @@ int setupJoystick(){
 void readJoystick(){
     joyGlobal.xAxis = analogRead(BASE+1);
     joyGlobal.yAxis = analogRead(BASE+2);
-    printf("\nChannel 1: value=%4d", joyGlobal.xAxis); //X Values
-    printf("\nChannel 2: value=%4d", joyGlobal.yAxis); //Y Values
+//    printf("\nChannel 1: value=%4d", joyGlobal.xAxis); //X Values
+//    printf("\nChannel 2: value=%4d", joyGlobal.yAxis); //Y Values
 }
 

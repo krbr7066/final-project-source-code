@@ -88,10 +88,10 @@ void convertJoytoLED(){
    bool right = false;
    bool up = false;
    bool down = false;
-    printf("\nTest1: up: %d down %d left %d right %d", up, down, left, right);
+//    printf("\nTest1: up: %d down %d left %d right %d", up, down, left, right);
  
    if (xLookup < 500) {
-        printf("\nX less than 500");
+     //   printf("\nX less than 500");
         left = true;
         if (xDir == 0) {
             xDir = 7;
@@ -99,7 +99,7 @@ void convertJoytoLED(){
             xDir--;
         }
     } else if (xLookup > 550) {
-        printf("\nX greater than 550");
+     //   printf("\nX greater than 550");
         right = true;
         if (xDir == 7) {
             xDir = 0;
@@ -109,7 +109,7 @@ void convertJoytoLED(){
     }
 
     if (yLookup < 500) {
-        printf("\nY less than 500");
+     //   printf("\nY less than 500");
         up = true;
         if (yDir == 0) {
             yDir = 7;
@@ -117,7 +117,7 @@ void convertJoytoLED(){
             yDir--;
         }
     } else if (yLookup > 550) {
-        printf("\nY greater than 550");
+   //     printf("\nY greater than 550");
         down = true;
         if (yDir == 7) {
             yDir = 0;
@@ -126,7 +126,7 @@ void convertJoytoLED(){
         }
     }
 
-    printf("\nTest2: up: %d down %d left %d right %d", up, down, left, right);
+ //   printf("\nTest2: up: %d down %d left %d right %d", up, down, left, right);
     if (up && left)
         joyGlobal.Dir = "\nUP-LEFT";
     else if (up && right)
@@ -154,7 +154,7 @@ void convertJoytoLED(){
 }
 
 void singleLED(int yDir, int xDir){
-    printf("\nIn single led mode");
+   // printf("\nIn single led mode");
     uint8_t reg = YValues[yDir];
     uint8_t val = XValues[xDir];
     //clearScreen();
@@ -165,7 +165,7 @@ void singleLED(int yDir, int xDir){
 void multipleLEDs(int yDir, int xDir){
     int dec;
     int i;
-    printf("\nIn multiLED X Dir: %d Y Dir: %d", yDir, xDir);
+   // printf("\nIn multiLED X Dir: %d Y Dir: %d", yDir, xDir);
     ledMatrix[yDir][xDir] = 1;
 //    printf("LedMatrix: %d", ledMatrix[yDir][xDir]);
     for (i = 0; i < 8; i++){
@@ -182,9 +182,9 @@ int arrayToHex(int yAxis){
     int zero = 0;
     char tmp[3];
     int i;
-    printf("\nIn array to hex");
+  //  printf("\nIn array to hex");
         for (i = 0; i < 8; i++){
-            printf("\nledMatrix: %d", ledMatrix[yAxis][i]);
+     //       printf("\nledMatrix: %d", ledMatrix[yAxis][i]);
             if(ledMatrix[yAxis][i] == 0){
                 if (i == 0){
                     sprintf(first, "%d", zero);
@@ -202,7 +202,7 @@ int arrayToHex(int yAxis){
             } 
         }
         bin = atoi(first);
-        printf("Binary: %d", bin);
+    //    printf("Binary: %d", bin);
         dec = binaryToDecimal(bin);
         return dec;
 }
