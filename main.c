@@ -2,7 +2,7 @@
 * Author: Kristina Brunsgaard
 * Date: November 14, 2019
 * File: main.c
-* Description:
+* Description: Main file that creates socket and listens for client. Takes joystick values and lights up corresponding led. Logs joystick direction, and sends file upon client request.
 * Open Sources Used:
 * https://stackoverflow.com/questions/2086126/need-programs-that-illustrate-use-of-settimer-and-alarm-functions-in-gnu-c
 */
@@ -275,7 +275,6 @@ int main(int argc, char *argv[])
     }
 
     /* Thread to handle logging */
-    printf("\nLogging Thread");
     if(pthread_create(&logThread, NULL, log_thread, (void*)NULL) < 0) {
         printf("\nFailed to create LOG thread\n");
     }    

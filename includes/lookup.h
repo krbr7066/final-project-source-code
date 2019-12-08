@@ -1,3 +1,9 @@
+/*
+* Author: Kristina Brunsgaard
+* Date: December 8, 2019
+* File: lookup.h
+*/
+
 const uint8_t YValues[8] = 
 {
   0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8

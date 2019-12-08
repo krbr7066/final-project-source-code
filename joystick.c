@@ -1,5 +1,12 @@
-// rp-mcp3008 Reads analogue values through MCP3008 chip
-//Source: http://www.noveldevices.co.uk/rp-mcp3008
+/*
+* Author: Kristina Brunsgaard
+* Date: December 8, 2019
+* File: joystick.c
+* Description: Joystick functions to setup joystick and read x and y axis va* lues 
+* Open Sources Used:
+* http://www.noveldevices.co.uk/rp-mcp3008
+*/
+
 
 #include <unistd.h>
 #include <stdio.h>
@@ -36,7 +43,5 @@ int setupJoystick(){
 void readJoystick(){
     joyGlobal.xAxis = analogRead(BASE+1);
     joyGlobal.yAxis = analogRead(BASE+2);
-//    printf("\nChannel 1: value=%4d", joyGlobal.xAxis); //X Values
-//    printf("\nChannel 2: value=%4d", joyGlobal.yAxis); //Y Values
 }
 

@@ -1,3 +1,9 @@
+/*
+* Author: Kristina Brunsgaard
+* Date: December 8, 2019
+* File: led.h
+*/
+
 #include <stdint.h>
 
 int ledMatrix[8][8];

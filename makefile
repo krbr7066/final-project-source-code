@@ -21,8 +21,7 @@ endif
 SRC =   led_test.c         \
         joystick_test.c    \
         scroll.c      \
-        main.c          \
-        server_text.c   
+        main.c           
 
 BINS    =   $(SRC:.c=)
 
@@ -45,10 +44,6 @@ test:   test.c
 
 main:   main.c
 	$(CC) $(CCFLAGS) -o main main.c $(LDFLAGS)
-
-server_text: server_text.c
-	$(CC) $(CCFLAGS) -o server_text server_text.c $(LDFLAGS)
-
 
 .c.o:
 	$Q echo [CC] $<

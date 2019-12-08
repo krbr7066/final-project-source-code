@@ -1,3 +1,9 @@
+/*
+* Author: Kristina Brunsgaard
+* Date: December 8, 2019
+* File: joystick.h
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 

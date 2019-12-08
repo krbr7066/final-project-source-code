@@ -1,14 +1,10 @@
-/* A simple client program to interact with the myServer.c program on the Raspberry.
-myClient.c
-D. Thiebaut
-Adapted from http://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
-The port number used in 51717.
-This code is compiled and run on the Macbook laptop as follows:
-   
-    g++ -o myClient myClient.c 
-    ./myClient
-
-
+/* 
+* Author: Kristina Brunsgaard
+* Date: December 8, 2019
+* File: client.c
+* Description: Client program to connect to raspberry pi through static ip a* nd receive joystick data file
+* Open Sources Used:
+* http://www.science.smith.edu/dftwiki/index.php/Tutorial:_Client/Server_on_the_Raspberry_Pi
 */
 #include <stdio.h>
 #include <sys/types.h>
@@ -25,26 +21,6 @@ This code is compiled and run on the Macbook laptop as follows:
 void error(char *msg) {
     perror(msg);
     exit(0);
-}
-
-void sendData( int sockfd, int x ) {
-  int n;
-
-  char buffer[32];
-  sprintf( buffer, "%d\n", x );
-  if ( (n = write( sockfd, buffer, strlen(buffer) ) ) < 0 )
-      error( "ERROR writing to socket" );
-  buffer[n] = '\0';
-}
-
-char * getData( int sockfd ) {
-  char buffer[4096];
-  int n;
-
-  if ( (n = read(sockfd,buffer,4096) ) < 0 )
-       error( "ERROR reading from socket" );
-  //buffer[n] = '\0';
-  return buffer;
 }
 
 int main(int argc, char *argv[])
@@ -81,7 +57,7 @@ socklen_t len = sizeof (error);
 int retval;
 
     while(1) {
-        memset(buffer, 0, sizeof(buffer));
+       // memset(buffer, 0, sizeof(buffer));
         retval = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
         
     if (retval != 0) {
@@ -94,15 +70,31 @@ int retval;
         /* socket has a non zero error status */
         fprintf(stderr, "socket error: %s\n", strerror(error));
     }
-
+        #if 0
         if ( (n = read(sockfd,buffer,4096) ) <= 0 ) { 
             printf( "\nERROR reading from socket" );
             close(sockfd);
             exit(0);
         }
+        printf("n: %d", n);
         printf("%s", buffer);
     }
+    #endif
 
+            memset(buffer, 0, sizeof(buffer)); //clear buffer
+		    n = recv(sockfd, buffer, sizeof(buffer), 0);
+		    if (n < 0){
+       	          printf("\nError reading socket");
+                  close(sockfd);
+                  exit(0);
+       		} else if (n == 0){
+                printf("\nClosed connection");
+                close(sockfd);
+                exit(0);
+            } else {
+			    printf("\nBuffer: %s", buffer);
+            }
+    }
 
     close( sockfd );
     return 0;
