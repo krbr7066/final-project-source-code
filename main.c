@@ -76,10 +76,14 @@ static void signal_handler (int signo)
 void * log_thread(void *arg){
     int errnum, error;
     char *direction;
-    printf("\nIn log thread");
+//    printf("\nIn log thread");
     while(1) {
         direction = joyGlobal.Dir;
-        printf("\nWrite %s", direction);
+        if (strcmp(direction, "") == 0) {
+            ; //do nothing    
+        } else {
+            printf("\n%s", direction);
+        }
         if( access(FILENAME, F_OK ) != -1 ) {
             output_fd = open(FILENAME,O_RDWR | O_APPEND, S_IRWXU | S_IRWXG | S_IRWXO); //file exists
  
@@ -123,8 +127,9 @@ void * sendFile(void *arg){
     pthread_t tid;
     char buffSend[4096];
     int file_size;
+    char* direction;
 
-    printf("\nIn Send File");
+//    printf("\nIn Send File");
     struct threadInfo *newItem = (struct threadInfo*) arg;
     tid = pthread_self();
     newItem->pid = tid;
@@ -132,10 +137,20 @@ void * sendFile(void *arg){
     pthread_mutex_lock(&readLock);
     file_size = fread(buffSend, sizeof(char), sizeof(buffSend), fp);
     if(send(newItem->fd, buffSend, file_size, 0) < 0) {
-            perror("Failed to send file");
+            perror("\nFailed to send file");
     }
-    printf("Sent: %s", buffSend);
+    printf("\nSent File\n");
     pthread_mutex_unlock(&readLock);
+
+    //Continue sending info
+    direction = joyGlobal.Dir;
+    if (strcmp(direction, "") != 0) {
+        if (send(newItem->fd, direction, sizeof(direction), 0) < 0) {
+            perror("\nFailed to send direction");
+        }
+         
+}
+
 
     close(newItem->fd);
     pthread_exit(NULL);
@@ -237,7 +252,7 @@ int main(int argc, char *argv[])
          errnum = errno;
          fprintf(stderr, "Listen Error: %s\n", strerror( errnum ));
      } else {
-         printf("\nListening on port %d", MYPORT);
+         printf("\nListening on port %s", MYPORT);
      }
 
     printf("\nSetting up joystick");
