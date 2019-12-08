@@ -154,7 +154,7 @@ void * sendFile(void *arg){
                 perror("\nFailed to send direction");
             }
         }
-         
+        usleep(250000); 
     }
 
 
@@ -272,8 +272,8 @@ int main(int argc, char *argv[])
     spichar(' ');
     
     /* Initialize joystick struct */
-    joyGlobal.xAxis = 450;
-    joyGlobal.yAxis = 450;
+    joyGlobal.xAxis = 525;
+    joyGlobal.yAxis = 525;
     joyGlobal.Dir = "";
     /* Thread to handle LED */
     //printf("\nLED Thread");

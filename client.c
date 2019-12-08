@@ -76,15 +76,32 @@ int main(int argc, char *argv[])
     
 //    data = getData(sockfd);
  
-   if ( (n = read(sockfd,buffer,4096) ) < 0 ) 
-       error( "ERROR reading from socket" );
-    printf("%s", buffer);
-//    for ( n = 0; n < 10; n++ ) {
-//      sendData( sockfd, n );
-//      data = getData( sockfd );
-//      printf("%d ->  %d\n",n, data );
-//    }
-//    sendData( sockfd, -2 );
+int error = 0;
+socklen_t len = sizeof (error);
+int retval;
+
+    while(1) {
+        retval = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
+        
+    if (retval != 0) {
+        /* there was a problem getting the error code */
+        fprintf(stderr, "error getting socket error code: %s\n", strerror(retval));
+        return -1;
+    }
+
+    if (error != 0) {
+        /* socket has a non zero error status */
+        fprintf(stderr, "socket error: %s\n", strerror(error));
+    }
+
+        if ( (n = read(sockfd,buffer,4096) ) <= 0 ) { 
+            printf( "ERROR reading from socket" );
+            close(sockfd);
+            exit(0);
+        }
+        printf("%s %d", buffer, n);
+    }
+
 
     close( sockfd );
     return 0;
