@@ -78,21 +78,18 @@ void * log_thread(void *arg){
     char *direction;
 //    printf("\nIn log thread");
     while(1) {
-        direction = joyGlobal.Dir;
-        if (strcmp(direction, "") == 0) {
-            ; //do nothing    
-        } else {
-            printf("\n%s", direction);
-        }
         if( access(FILENAME, F_OK ) != -1 ) {
-            output_fd = open(FILENAME,O_RDWR | O_APPEND, S_IRWXU | S_IRWXG | S_IRWXO); //file exists
+            //Check if file already open
+            if (output_fd <= 0) {
+                output_fd = open(FILENAME,O_RDWR | O_APPEND, S_IRWXU | S_IRWXG | S_IRWXO); //file exists
  
-            if (output_fd == -1){
-                errnum = errno;
-                fprintf(stderr, "Open Error: %s\n", strerror( errnum ));
-            } else if (output_fd > 0) {
+                if (output_fd == -1){
+                    errnum = errno;
+                    fprintf(stderr, "Open Error: %s\n", strerror( errnum ));
+                } else if (output_fd > 0) {
 //                printf("\nSuccesfully opened file");
-            }
+                }
+                }
         } else { //create file
             output_fd = open(FILENAME, O_RDWR|O_CREAT|O_TRUNC, S_IRWXU | S_IRWXG | S_IRWXO);
  
@@ -104,6 +101,13 @@ void * log_thread(void *arg){
             }
         }
         pthread_mutex_lock(&writeLock);
+        direction = joyGlobal.Dir;
+        if (strcmp(direction, "") == 0) {
+             ; //do nothing    
+        } else {
+             printf("\n%s", direction);
+        }
+
         error = write(output_fd, direction, strlen(direction));
         if (error == -1) {
             printf("\nWrite error");
@@ -143,13 +147,15 @@ void * sendFile(void *arg){
     pthread_mutex_unlock(&readLock);
 
     //Continue sending info
-    direction = joyGlobal.Dir;
-    if (strcmp(direction, "") != 0) {
-        if (send(newItem->fd, direction, sizeof(direction), 0) < 0) {
-            perror("\nFailed to send direction");
+    while(1) {
+        direction = joyGlobal.Dir;
+        if (strcmp(direction, "") != 0) {
+            if (send(newItem->fd, direction, sizeof(direction), 0) < 0) {
+                perror("\nFailed to send direction");
+            }
         }
          
-}
+    }
 
 
     close(newItem->fd);
@@ -299,7 +305,7 @@ int main(int argc, char *argv[])
              errnum = errno;
              fprintf(stderr, "Accept Error: %s\n", strerror( errnum ));
          } else {
-             syslog (LOG_INFO, "Accepted connection from %s", inet_ntoa(their_addr.sin_addr));
+             syslog (LOG_INFO, "\nAccepted connection from %s", inet_ntoa(their_addr.sin_addr));
              printf("\nAccepted connection from %s", inet_ntoa(their_addr.sin_addr));
              success = 1;
          }
